@@ -3,7 +3,20 @@
 ## Features
 
 ### Integration with Project / Tasks (Workorders)
-To make this module work with project tasks you must have the extra fields (Complimentary attributes) feature of Dolibarr enabled.
+IMPORTANT: To make this module work with project tasks you must have the extra fields (Complimentary attributes) feature of Dolibarr enabled.
+
+In the Module Settings of Projects/Leads select the Complimentary Fields (Projects) tab.
+In here you will need to add an extra field with the following settings.
+```
+Title: VWBS Version
+Code: vwbs_version
+Type: integer
+Length: 3
+Required: True
+Calculatable: No
+Visible: True
+```
+
 Create an extra field for the tasks with a text or integer field. The attribute code for this needs to be placed into the settings of the VWBS Module to get it working correctly.
 
 From here, on page load, VWBS module will inject the custom lists in place of the extra fields textbox.

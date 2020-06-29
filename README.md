@@ -5,6 +5,11 @@
 ### Integration with Project / Tasks (Workorders)
 IMPORTANT: To make this module work with project tasks you must have the extra fields (Complimentary attributes) feature of Dolibarr enabled.
 
+When the Module is activated it will create two database tables.
+One for WBS Versions and one for WBS Items.
+A version needs a Label, Description, RowID(Automatic) and a status (Active / Inactive).
+Items need a RowID(Automatic), Label, Status, ParentID, VersionID, Level, WBS Code.
+
 In the Module Settings of Projects/Leads select the Complimentary Fields (Projects) tab.
 In here you will need to add an extra field with the following settings.
 ```
@@ -16,6 +21,7 @@ Required: True
 Calculatable: No
 Visible: True
 ```
+
 
 Create an extra field for the tasks with a text or integer field. The attribute code for this needs to be placed into the settings of the VWBS Module to get it working correctly.
 

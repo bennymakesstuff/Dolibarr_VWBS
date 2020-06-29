@@ -92,6 +92,12 @@ else header('Cache-Control: no-cache');
 					    padding: 0.5rem 1rem;
 					    cursor: pointer;}
 
+#wbsButton {background-color: #800000;
+					    color: #ffffff;
+					    border: 0;
+					    padding: 0.5rem 1rem;
+					    cursor: pointer;}
+
 #vwbsClose {position: absolute;
 						top: 0px;
 						right: 10px;

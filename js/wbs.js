@@ -12,6 +12,23 @@
     })
 }
 */
+// This function WBS Version data wrapped in a promise from a JSON source
+async function loadWBSVersions(){
+  JSCore.log('Loading WBS Versions','syslog');
+  JSCore.log('Loading WBS Versions','console');
+  var responseData = await Promise.resolve(
+    $.get(JSCore.url+'/custom/wbs/loadWBSVersions.php')
+    .then(function(data){
+        var parsedData = JSON.parse(data);
+        console.log(parsedData);
+        return parsedData;
+    })).catch(function(e){
+          return("Failed: "+e.status+" - "+e.responseText);
+        });
+    return responseData;
+}
+
+
 // This function gets or posts data wrapped in a promise from a JSON source
 async function getWBSName(parentNumber = 0){
   var newParentNumber = parseInt(parentNumber);
@@ -96,18 +113,68 @@ function selectListThree(vwbsNumber,vwbsName){
 
 
 $(document).ready(function(){
-
-  if(findNeedle("create",JSCore.fullpath)||findNeedle("edit",JSCore.fullpath)){
-    initializeCreatePage();
+  JSCore.log("URL: "+JSCore.fullpath,"syslog");
+  if(findNeedle("projet/tasks.php",JSCore.fullpath) && (findNeedle("create",JSCore.fullpath)||findNeedle("edit",JSCore.fullpath))){
+    initializeTaskCreatePage();
+  }
+  else if(findNeedle("projet/tasks.php",JSCore.fullpath) && (findNeedle("task.php?id=",JSCore.fullpath))){
+    initializeTaskListPage();
+  }
+  else if((findNeedle("projet/card.php",JSCore.fullpath) && (findNeedle("create",JSCore.fullpath)||findNeedle("edit",JSCore.fullpath)))||JSCore.pathOnly == "/projet/card.php"){
+    JSCore.log("Attaching WBS Module","syslog");
+    initializeProjectCreatePage();
   }
   else{
-    initializeListPage();
+    //Do nothing
   }
 
 });
 
+function initializeProjectCreatePage(){
+  var wbsField = $('#options_vwbs_version');
+  var wbsParent = wbsField.parent();
 
-function initializeListPage(){
+  // Hide the original field by setting to input type hidden.
+  // It is still needed for collecting the final value in the database.
+  wbsField.attr('type','hidden');
+
+  var wbsDropdown = "<div class='wbsOuter'>";
+      wbsDropdown += "<button id='vwbsButton'>Select WBS Version</button>";
+      wbsDropdown += "<div id='vwbsBox' class='hidden'>";
+      wbsDropdown += "<div id='vwbsTitle'>";
+      wbsDropdown += "Select a VWBS Version";
+      wbsDropdown += "</div>";
+      wbsDropdown += "<div id='vwbsClose'>";
+      wbsDropdown += "x";
+      wbsDropdown += "</div>";
+      wbsDropdown += "<div id='vwbsMiddle'>";
+      //VWBS Page Here
+      wbsDropdown += "</div>";
+      wbsDropdown += "<div id='vwbsBottom'>";
+      wbsDropdown += "</div>";
+      wbsDropdown += "</div>";
+      wbsDropdown += "</div>";
+
+  var  wbsDropdownHtml = $.parseHTML(wbsDropdown);
+
+  wbsParent.append(wbsDropdownHtml);
+  JSCore.log("Appending VWBS Version Button","syslog");
+
+  $(document).on('click','#vwbsButton',function(e){
+    e.preventDefault();
+    JSCore.log('Opened WBS Version Selector','syslog');
+    $('#vwbsBox').removeClass('hidden').addClass('shown');
+  });
+
+  $(document).on('click','#vwbsClose',function(e){
+    e.preventDefault();
+    JSCore.log('Closed WBS Selector','syslog');
+    $('#vwbsBox').removeClass('shown').addClass('hidden');
+  });
+}
+
+
+function initializeTaskListPage(){
   var vwbsStage = $('.project_task_extras_fk_vwbs').first();
   var vwbsNumber = parseInt(vwbsStage.html());
   vwbsStage.html('<div class="lds-facebook"><div></div><div></div><div></div></div>');
@@ -118,7 +185,7 @@ function initializeListPage(){
 }
 
 
-function initializeCreatePage(){
+function initializeTaskCreatePage(){
 
   JSCore.log('Tasks Page Loaded','syslog');
 
@@ -174,7 +241,6 @@ function initializeCreatePage(){
     JSCore.log('Opened WBS Selector','syslog');
     $('#vwbsBox').removeClass('hidden').addClass('shown');
   });
-
 
   $(document).on('click','#vwbsClose',function(e){
     e.preventDefault();
